@@ -21,11 +21,26 @@ function Courses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("https://ldijnhtnswj3t5khnepzmott7q0thqfl.lambda-url.us-east-1.on.aws/");
+        const response = await fetch(
+          "https://ldijnhtnswj3t5khnepzmott7q0thqfl.lambda-url.us-east-1.on.aws/"
+        );
+
         const data = await response.json();
-        setCourses(data);
+        console.log("courses api response:", data);
+
+        if (Array.isArray(data)) {
+          setCourses(data);
+        } else if (Array.isArray(data.body)) {
+          setCourses(data.body);
+        } else if (typeof data.body === "string") {
+          const parsed = JSON.parse(data.body);
+          setCourses(Array.isArray(parsed) ? parsed : []);
+        } else {
+          setCourses([]);
+        }
       } catch (error) {
         console.error("Error fetching courses:", error);
+        setCourses([]);
       }
     };
 
@@ -35,17 +50,19 @@ function Courses() {
     setSelectedCourses(saved);
   }, []);
 
-  const filteredCourses = courses.filter(
-    (course) => course.college === studentCollege
-  );
+  const filteredCourses = Array.isArray(courses)
+    ? courses.filter((course) => course.college === studentCollege)
+    : [];
 
   const toggleCourseSelection = (courseCode: string) => {
     let updated: string[];
+
     if (selectedCourses.includes(courseCode)) {
       updated = selectedCourses.filter((c) => c !== courseCode);
     } else {
       updated = [...selectedCourses, courseCode];
     }
+
     setSelectedCourses(updated);
     localStorage.setItem("selectedCourses", JSON.stringify(updated));
   };
@@ -55,6 +72,7 @@ function Courses() {
       alert("Please select at least one course.");
       return;
     }
+
     navigate("/professors");
   };
 
@@ -74,6 +92,7 @@ function Courses() {
           color: "white",
           marginTop: "60px",
           fontSize: "3rem",
+          fontWeight: "800",
         }}
       >
         Available Courses
@@ -87,36 +106,58 @@ function Courses() {
           marginTop: "40px",
         }}
       >
-        {filteredCourses.map((course, index) => (
-          <div
-            key={index}
-            onClick={() => toggleCourseSelection(course.courseCode)}
+        {filteredCourses.length > 0 ? (
+          filteredCourses.map((course, index) => (
+            <div
+              key={index}
+              onClick={() => toggleCourseSelection(course.courseCode)}
+              style={{
+                cursor: "pointer",
+                border: selectedCourses.includes(course.courseCode)
+                  ? "2px solid #FFD700"
+                  : "2px solid transparent",
+                borderRadius: "18px",
+              }}
+            >
+              <CourseCard
+                courseCode={course.courseCode}
+                title={course.title}
+                professor={course.professor}
+              />
+            </div>
+          ))
+        ) : (
+          <p
             style={{
-              cursor: "pointer",
-              border: selectedCourses.includes(course.courseCode)
-                ? "2px solid #FFD700"
-                : "2px solid transparent",
+              color: "white",
+              textAlign: "center",
+              width: "100%",
+              marginTop: "40px",
+              fontSize: "1.1rem",
             }}
           >
-            <CourseCard
-              courseCode={course.courseCode}
-              title={course.title}
-              professor={course.professor}
-            />
-          </div>
-        ))}
+            No courses available yet for your selected college.
+          </p>
+        )}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "40px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "40px",
+        }}
+      >
         <button
           onClick={handleContinue}
           style={{
             padding: "1rem 2rem",
             fontWeight: "700",
-            backgroundColor: "white",
+            backgroundColor: "#FFD700",
             color: "#0C2340",
-            borderRadius: "0.5rem",
+            borderRadius: "0.75rem",
             cursor: "pointer",
+            border: "none",
           }}
         >
           Continue to Professors

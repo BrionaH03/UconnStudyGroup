@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { getProfile } from "../utils/getProfile";
+import logo from "../assets/uconn-logo.png";
 
 function Navbar() {
   const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
@@ -12,7 +13,7 @@ function Navbar() {
 
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 🔍 Check if profile is complete
+  // 🔍 Check profile
   useEffect(() => {
     const checkProfile = async () => {
       if (!isAuthenticated || !user?.sub) {
@@ -31,7 +32,7 @@ function Navbar() {
     }
   }, [isAuthenticated, user, isLoading]);
 
-  // 🔽 Close dropdown when clicking outside
+  // 🔽 Close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -61,18 +62,38 @@ function Navbar() {
         boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
       }}
     >
-      {/* Logo */}
-      <div
+      {/* 🐺 LOGO + TITLE */}
+      <Link
+        to="/"
         style={{
-          fontWeight: "800",
-          fontSize: "1.4rem",
-          color: "#FFD700",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          textDecoration: "none",
         }}
       >
-        UConn Study Group
-      </div>
+        <img
+          src={logo}
+          alt="UConn Logo"
+          style={{
+            width: "45px",
+            height: "45px",
+            objectFit: "contain",
+          }}
+        />
 
-      {/* Navigation */}
+        <span
+          style={{
+            fontWeight: "800",
+            fontSize: "1.4rem",
+            color: "#FFD700",
+          }}
+        >
+          UConn Study Group
+        </span>
+      </Link>
+
+      {/* NAV LINKS */}
       <div
         style={{
           display: "flex",
@@ -109,7 +130,7 @@ function Navbar() {
           </>
         )}
 
-        {/* Not logged in */}
+        {/* NOT LOGGED IN */}
         {!isAuthenticated ? (
           <>
             <button
@@ -151,10 +172,10 @@ function Navbar() {
         ) : (
           <>
             {checkingProfile ? (
-              <span style={{ fontWeight: "700" }}>Loading...</span>
+              <span>Loading...</span>
             ) : profileComplete ? (
               <div style={{ position: "relative" }} ref={menuRef}>
-                {/* 👤 Profile Button */}
+                {/* 👤 PROFILE BUTTON */}
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
                   style={{
@@ -170,7 +191,7 @@ function Navbar() {
                     border: "none",
                   }}
                 >
-                  {/* Gold initial circle */}
+                  {/* GOLD CIRCLE */}
                   <div
                     style={{
                       width: "30px",
@@ -190,7 +211,7 @@ function Navbar() {
                   <span>{user?.name?.split(" ")[0]} ▾</span>
                 </button>
 
-                {/* Dropdown */}
+                {/* DROPDOWN */}
                 {menuOpen && (
                   <div
                     style={{
@@ -202,7 +223,6 @@ function Navbar() {
                       borderRadius: "0.75rem",
                       boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
                       minWidth: "180px",
-                      overflow: "hidden",
                     }}
                   >
                     {[
@@ -216,10 +236,9 @@ function Navbar() {
                         onClick={() => setMenuOpen(false)}
                         style={{
                           display: "block",
-                          padding: "0.9rem 1rem",
+                          padding: "0.9rem",
                           textDecoration: "none",
                           color: "#0C2340",
-                          borderBottom: "1px solid #eee",
                         }}
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.backgroundColor = "#f5f5f5")
@@ -243,19 +262,12 @@ function Navbar() {
                       style={{
                         width: "100%",
                         textAlign: "left",
-                        padding: "0.9rem 1rem",
-                        backgroundColor: "white",
-                        color: "#0C2340",
+                        padding: "0.9rem",
                         border: "none",
+                        backgroundColor: "white",
                         cursor: "pointer",
                         fontWeight: "700",
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#f5f5f5")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "white")
-                      }
                     >
                       Log Out
                     </button>
@@ -264,27 +276,8 @@ function Navbar() {
               </div>
             ) : (
               <>
-                <span style={{ fontWeight: "700" }}>
-                  Welcome, {user?.name?.split(" ")[0]}
-                </span>
-                <button
-                  onClick={() =>
-                    logout({
-                      logoutParams: {
-                        returnTo: window.location.origin,
-                      },
-                    })
-                  }
-                  style={{
-                    padding: "0.65rem 1.2rem",
-                    backgroundColor: "white",
-                    color: "#0C2340",
-                    borderRadius: "0.6rem",
-                    cursor: "pointer",
-                    fontWeight: "700",
-                    border: "none",
-                  }}
-                >
+                <span>Welcome, {user?.name?.split(" ")[0]}</span>
+                <button onClick={() => logout()}>
                   Log Out
                 </button>
               </>
