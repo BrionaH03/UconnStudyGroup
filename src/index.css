@@ -1,3 +1,6 @@
+/* index.css */
+
+/*  Global body styles */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +8,18 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #13314f; /* optional light gray background */
 }
 
+/*  Code block styles */
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  background-color: #29344b; /* optional subtle highlight */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
 }
+
+/* Tailwind CSS imports - MUST be outside any CSS block */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
