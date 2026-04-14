@@ -1,5 +1,5 @@
 # UconnStudyGroup
-Helping the big campus feel smaller 
+Helping this big Uconn campus feel smaller!
 React app with AWS Lambda, DynamoDB, and Auth0 authentication.
 
 # Getting Started with Create React App
