@@ -1,3 +1,7 @@
+# UconnStudyGroup
+Helping the big campus feel smaller 
+React app with AWS Lambda, DynamoDB, and Auth0 authentication.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
