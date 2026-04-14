@@ -1,43 +1,74 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+
+const colleges = [
+  "School of Engineering",
+  "School of Business",
+  "College of Liberal Arts and Sciences",
+];
 
 function Colleges() {
   return (
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#0C2340",
+        background: "linear-gradient(to bottom right, #0C2340, #1f4d7a)",
         textAlign: "center",
-        paddingTop: "100px",
+        paddingTop: "40px",
         fontFamily: "Times New Roman, serif",
         color: "white",
       }}
-    >   <Navbar />
-      <h1 style={{ fontSize: "3rem", marginBottom: "2rem" }}>
+    >
+      <Navbar />
+
+      <h1
+        style={{
+          fontSize: "2.4rem",
+          marginTop: "30px",
+          marginBottom: "1rem",
+          fontWeight: "800",
+        }}
+      >
         UConn Colleges
       </h1>
 
-      <p>School of Engineering</p>
-      <p>School of Business</p>
-      <p>College of Liberal Arts and Sciences</p>
+      <p
+        style={{
+          fontSize: "1rem",
+          marginBottom: "2rem",
+          opacity: 0.95,
+        }}
+      >
+        Explore colleges connected to available courses and study groups.
+      </p>
 
-      <br />
-
-      <Link to="/">
-        <button
-          style={{
-            padding: "1rem 2rem",
-            fontWeight: "700",
-            backgroundColor: "white",
-            color: "#0C2340",
-            borderRadius: "0.5rem",
-            cursor: "pointer",
-          }}
-        >
-          Back Home
-        </button>
-      </Link>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          flexWrap: "wrap",
+          padding: "0 20px",
+        }}
+      >
+        {colleges.map((college) => (
+          <div
+            key={college}
+            style={{
+              backgroundColor: "white",
+              color: "#0C2340",
+              width: "260px",
+              padding: "1.2rem",
+              borderRadius: "1rem",
+              boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
+              fontSize: "1.05rem",
+              fontWeight: "700",
+            }}
+          >
+            {college}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

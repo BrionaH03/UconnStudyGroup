@@ -62,7 +62,7 @@ function Courses() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#0C2340",
+        background: "linear-gradient(to bottom right, #0C2340, #1f4d7a)",
         fontFamily: "Times New Roman, serif",
       }}
     >

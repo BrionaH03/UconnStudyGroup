@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
-import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { getProfile } from "../utils/getProfile";
+import { useNavigate } from "react-router-dom";
 
-function Signup() {
+function Settings() {
+  const { user } = useAuth0();
   const navigate = useNavigate();
-  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
   const [year, setYear] = useState("");
   const [major, setMajor] = useState("");
@@ -14,24 +14,23 @@ function Signup() {
   const [college, setCollege] = useState("");
 
   useEffect(() => {
-    const check = async () => {
+    const loadProfile = async () => {
       if (user?.sub) {
         const profile = await getProfile(user.sub);
-
-        if (profile?.profileComplete) {
-          navigate("/courses");
+        if (profile) {
+          setYear(profile.year || "");
+          setMajor(profile.major || "");
+          setStudentId(profile.studentId || "");
+          setCollege(profile.college || "");
         }
       }
     };
 
-    check();
-  }, [user, navigate]);
+    loadProfile();
+  }, [user]);
 
-  const handleSubmit = async () => {
-    if (!isAuthenticated || !user) {
-      alert("Please log in first.");
-      return;
-    }
+  const handleSave = async () => {
+    if (!user) return;
 
     try {
       const response = await fetch(
@@ -55,88 +54,17 @@ function Signup() {
       );
 
       if (!response.ok) {
-        alert("Failed to save student profile.");
+        alert("Failed to update settings.");
         return;
       }
 
-      localStorage.setItem(
-        "student",
-        JSON.stringify({
-          auth0Id: user.sub || "",
-          name: user.name || "",
-          email: user.email || "",
-          studentId,
-          year,
-          major,
-          college,
-          profileComplete: true,
-        })
-      );
-
-      navigate("/courses");
+      alert("Profile updated!");
+      navigate("/profile");
     } catch (error) {
-      console.error("REAL fetch error:", error);
+      console.error("Error updating profile:", error);
       alert("Something went wrong.");
     }
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(to bottom right, #0C2340, #1f4d7a)",
-          color: "white",
-          fontFamily: "Times New Roman, serif",
-        }}
-      >
-        <Navbar />
-
-        <div
-          style={{
-            display: "flex",
-            minHeight: "80vh",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "2rem",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "rgba(255,255,255,0.12)",
-              padding: "2rem",
-              borderRadius: "1rem",
-              textAlign: "center",
-              maxWidth: "500px",
-            }}
-          >
-            <h1 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>
-              Sign Up
-            </h1>
-
-            <p style={{ marginBottom: "1.5rem", lineHeight: 1.6 }}>
-              First log in or create an account, then complete your student profile.
-            </p>
-
-            <button
-              onClick={() => loginWithRedirect()}
-              style={{
-                padding: "0.9rem 1.5rem",
-                backgroundColor: "#FFD700",
-                color: "#0C2340",
-                borderRadius: "0.6rem",
-                cursor: "pointer",
-                fontWeight: "700",
-                border: "none",
-              }}
-            >
-              Log In to Continue
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -152,31 +80,20 @@ function Signup() {
       <h1
         style={{
           textAlign: "center",
-          marginTop: "60px",
+          marginTop: "50px",
           fontSize: "3rem",
           fontWeight: "800",
         }}
       >
-        Complete Your Signup
+        Settings
       </h1>
-
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: "10px",
-          marginBottom: "25px",
-          fontSize: "1.05rem",
-        }}
-      >
-        Welcome, {user?.name?.split(" ")[0]}. Enter your school details to continue.
-      </p>
 
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          marginTop: "20px",
+          marginTop: "30px",
           gap: "15px",
         }}
       >
@@ -186,21 +103,18 @@ function Signup() {
           onChange={(e) => setYear(e.target.value)}
           style={{ padding: "12px", borderRadius: "8px", width: "280px" }}
         />
-
         <input
           placeholder="Major"
           value={major}
           onChange={(e) => setMajor(e.target.value)}
           style={{ padding: "12px", borderRadius: "8px", width: "280px" }}
         />
-
         <input
           placeholder="Student PeopleSoft ID"
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
           style={{ padding: "12px", borderRadius: "8px", width: "280px" }}
         />
-
         <select
           value={college}
           onChange={(e) => setCollege(e.target.value)}
@@ -213,7 +127,7 @@ function Signup() {
         </select>
 
         <button
-          onClick={handleSubmit}
+          onClick={handleSave}
           style={{
             padding: "1rem 2rem",
             fontWeight: "700",
@@ -225,11 +139,11 @@ function Signup() {
             marginTop: "10px",
           }}
         >
-          Complete Sign Up
+          Save Changes
         </button>
       </div>
     </div>
   );
 }
 
-export default Signup;
+export default Settings;
